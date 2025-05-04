@@ -1,9 +1,10 @@
-// --- Backend (Express.js) ---
+// --- Backend (Express.js) with PostgreSQL ---
 // File: server.js
 const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
+const { Pool } = require('pg');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -11,56 +12,68 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// SQLite DB
-const db = new sqlite3.Database('./plantpal.db');
-db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+// PostgreSQL Pool
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
+});
+
+// Ensure tables exist
+const initializeDb = async () => {
+  await pool.query(`CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
     name TEXT,
     email TEXT,
     timezone TEXT
   )`);
 
-  db.run(`CREATE TABLE IF NOT EXISTS plants (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER,
+  await pool.query(`CREATE TABLE IF NOT EXISTS plants (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
     nickname TEXT,
     species TEXT,
     location TEXT,
-    last_watered TEXT,
-    watering_freq_days INTEGER,
-    FOREIGN KEY(user_id) REFERENCES users(id)
+    last_watered DATE,
+    watering_freq_days INTEGER
   )`);
 
-  db.run(`CREATE TABLE IF NOT EXISTS care_logs (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    plant_id INTEGER,
-    date TEXT,
+  await pool.query(`CREATE TABLE IF NOT EXISTS care_logs (
+    id SERIAL PRIMARY KEY,
+    plant_id INTEGER REFERENCES plants(id),
+    date DATE,
     type TEXT,
-    notes TEXT,
-    FOREIGN KEY(plant_id) REFERENCES plants(id)
+    notes TEXT
   )`);
-});
+};
 
+initializeDb().catch(err => console.error('Error initializing DB', err));
+
+// Serve frontend
 app.get('/', (req, res) => {
-  res.send('🌿 PlantPal server is running!');
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/plants/:userId', (req, res) => {
-  db.all("SELECT * FROM plants WHERE user_id = ?", [req.params.userId], (err, rows) => {
-    if (err) return res.status(500).send(err);
+app.get('/plants/:userId', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT * FROM plants WHERE user_id = $1', [req.params.userId]);
     res.json(rows);
-  });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
 });
 
-app.post('/plant', (req, res) => {
+app.post('/plant', async (req, res) => {
   const { user_id, nickname, species, location, last_watered, watering_freq_days } = req.body;
-  db.run("INSERT INTO plants (user_id, nickname, species, location, last_watered, watering_freq_days) VALUES (?, ?, ?, ?, ?, ?)",
-    [user_id, nickname, species, location, last_watered, watering_freq_days],
-    function (err) {
-      if (err) return res.status(500).send(err);
-      res.json({ id: this.lastID });
-    });
+  try {
+    const result = await pool.query(
+      `INSERT INTO plants (user_id, nickname, species, location, last_watered, watering_freq_days)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+      [user_id, nickname, species, location, last_watered, watering_freq_days]
+    );
+    res.json({ id: result.rows[0].id });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
 });
 
 app.listen(PORT, () => console.log(`PlantPal server running on port ${PORT}`));
