@@ -6,7 +6,31 @@
 </head>
 <body>
   <h1>Welcome to PlantPal</h1>
-  <div id="plant-list"></div>
+
+  <section id="plant-selection">
+    <h2>Choose Your Plant</h2>
+    <div id="plant-gallery">
+      <!-- Plant options will be inserted here by script.js -->
+    </div>
+  </section>
+
+  <section id="active-plant" style="display:none;">
+    <h2>Your Virtual Plant</h2>
+    <div id="plant-info"></div>
+    <button onclick="showCareForm()">Care for Plant</button>
+  </section>
+
+  <section id="care-form" style="display:none;">
+    <h2>Give Your Plant Some Love</h2>
+    <form id="ai-form">
+      <input type="text" id="nickname" placeholder="Plant nickname" required />
+      <input type="text" id="species" placeholder="Species" required />
+      <textarea id="issue" placeholder="Describe the issue..." required></textarea>
+      <button type="submit">Ask AI</button>
+    </form>
+    <div id="ai-response"></div>
+  </section>
+
   <script src="script.js"></script>
 </body>
 </html>
