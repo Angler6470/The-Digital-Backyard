@@ -1,11 +1,11 @@
-// --- Backend (Express.js) with PostgreSQL and OpenAI ---
+// --- Backend (Express.js) with PostgreSQL and OpenAI v4 ---
 // File: server.js
 const express = require('express');
 const { Pool } = require('pg');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
-const { Configuration, OpenAIApi } = require('openai');
+const OpenAI = require('openai');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -19,11 +19,8 @@ const pool = new Pool({
   ssl: { rejectUnauthorized: false },
 });
 
-// OpenAI Configuration
-const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-const openai = new OpenAIApi(configuration);
+// OpenAI Configuration (v4)
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 // Ensure tables exist
 const initializeDb = async () => {
@@ -112,18 +109,18 @@ app.post('/digital-plant', async (req, res) => {
   }
 });
 
-// GPT-powered plant care tip endpoint
+// GPT-powered plant care tip endpoint using OpenAI v4
 app.post('/plant-tips', async (req, res) => {
   const { nickname, species, issue } = req.body;
   try {
     const prompt = `Give personalized care advice for a plant named "${nickname}" (${species}). The owner says: "${issue}".`;
 
-    const response = await openai.createChatCompletion({
+    const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: prompt }],
     });
 
-    const tip = response.data.choices[0].message.content;
+    const tip = response.choices[0].message.content;
     res.json({ tip });
   } catch (err) {
     res.status(500).send(err.message);
