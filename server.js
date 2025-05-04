@@ -42,6 +42,10 @@ db.serialize(() => {
   )`);
 });
 
+app.get('/', (req, res) => {
+  res.send('🌿 PlantPal server is running!');
+});
+
 app.get('/plants/:userId', (req, res) => {
   db.all("SELECT * FROM plants WHERE user_id = ?", [req.params.userId], (err, rows) => {
     if (err) return res.status(500).send(err);
