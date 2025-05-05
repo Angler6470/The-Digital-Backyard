@@ -291,6 +291,10 @@ activePlantSection.style.display = "block";
 updatePlantInfo();
 loadingSpinner.style.display = "none";
 loadingSpinner.classList.remove("spinner-animate");
+
+startLightTimer("indirect");
+if (lightTimer) clearInterval(lightTimer);
+lightTimer = setInterval(handleLightDuration, 3000);
 }
 
 async function generateProfile() {
@@ -317,9 +321,7 @@ if (!activePlant) {
   showAlert("No active plant selected!", true);
   return;
 }
-
 if (isUpdatingLightIntensity) return;
-
 isUpdatingLightIntensity = true;
 try {
   activePlant.currentLight = value;
@@ -347,12 +349,61 @@ try {
       plantInfo.classList.remove("plant-info-warning");
       if (lightWarning) lightWarning.remove();
   }
+  // Start/Reset light timer
+  startLightTimer(value);
+  if (lightTimer) clearInterval(lightTimer);
+  lightTimer = setInterval(handleLightDuration, 3000); // check every 3 seconds
 } finally {
   isUpdatingLightIntensity = false;
-  updatePlantInfo(); //  Call this here to prevent loop, it's only called once when light is set
+  updatePlantInfo();
+}
 }
 
+function handleLightDuration() {
+if (!activePlant) return;
+const min = activePlant.minLightHours || 2;
+const max = activePlant.maxLightHours || 6;
+const type = activePlant.currentLight;
+lightDuration = ((Date.now() - lightStartTime) / (1000 * 60 * 60)); // hours
 
+// Direct sunlight: wilting if over max
+if (type === "direct" && lightDuration > max && !wiltingActive) {
+    wiltingActive = true;
+    showAlert(`${activePlant.nickname} is wilting from too much direct sunlight! Move to shade or indirect light.`, true);
+    startWilting("direct");
+}
+// Shade: too little light if over max
+if (type === "shade" && lightDuration > max && !wiltingActive) {
+    wiltingActive = true;
+    showAlert(`${activePlant.nickname} is becoming sluggish from too little light! Move to indirect or direct light.`, true);
+    startWilting("shade");
+}
+// Indirect: reset wilting if within range
+if ((type === "indirect" && lightDuration <= max) || (type !== activePlant.lastLightType)) {
+    stopWilting();
+}
+}
+
+function startWilting(reason) {
+if (!activePlant) return;
+if (wiltingInterval) clearInterval(wiltingInterval);
+wiltingInterval = setInterval(() => {
+    if (!activePlant) return;
+    activePlant.happiness = Math.max(0, activePlant.happiness - 5);
+    updatePlantInfo();
+    if (activePlant.happiness === 0) {
+        showAlert(`${activePlant.nickname} has wilted!`, true);
+        stopWilting();
+    }
+}, 3000); // decrease happiness every 3 seconds
+}
+
+function stopWilting() {
+if (wiltingInterval) {
+    clearInterval(wiltingInterval);
+    wiltingInterval = null;
+}
+wiltingActive = false;
 }
 
 function updatePlantInfo() {
@@ -611,6 +662,33 @@ if (!activePlant || !activePlant.customNPK || !activePlant.customNPK[stage]) {
   return 0;
 }
 return activePlant.customNPK[stage].split('-')[2] || 0;
+}
+
+// Timer logic for light exposure
+let lightTimer = null;
+let lightDuration = 0; // in hours
+let lightStartTime = null;
+let wiltingInterval = null;
+let wiltingActive = false;
+
+function startLightTimer(lightType) {
+    if (!activePlant) return;
+    clearLightTimer();
+    lightStartTime = Date.now();
+    activePlant.lastLightType = lightType;
+    lightDuration = 0;
+    wiltingActive = false;
+}
+
+function clearLightTimer() {
+    if (lightTimer) {
+        clearInterval(lightTimer);
+        lightTimer = null;
+    }
+    if (wiltingInterval) {
+        clearInterval(wiltingInterval);
+        wiltingInterval = null;
+    }
 }
 
 console.log("PlantPal script with fertilizer logic loaded ✅");
