@@ -92,7 +92,8 @@ function setEnvironment(env) {
       stageNeeds: care.stageNeeds,
       minLightHours: care.minLightHours,
       maxLightHours: care.maxLightHours,
-      sunRisk: care.sunRisk
+      sunRisk: care.sunRisk,
+      currentLight: "indirect"
     };
     document.getElementById("env-select").style.display = "none";
     activePlantSection.style.display = "block";
@@ -120,6 +121,15 @@ function setEnvironment(env) {
         loadingSpinner.style.display = "none";
         loadingSpinner.classList.remove("spinner-animate");
       });
+  }
+}
+
+function setLightIntensity(value) {
+  activePlant.currentLight = value;
+  if (value !== activePlant.sunlightType) {
+    plantInfo.style.border = "2px dashed orange";
+  } else {
+    plantInfo.style.border = "2px solid transparent";
   }
 }
 
@@ -151,12 +161,15 @@ function updatePlantInfo() {
       <p>Sunlight: ${activePlant.sunlightType} (${activePlant.minLightHours}-${activePlant.maxLightHours} hrs/day)</p>
       <p style="font-size: 0.9rem; color: #666;">⚠️ ${activePlant.sunRisk}</p>
       <p>Temp: ${activePlant.temp}°F (Ideal: ${activePlant.tempRange})</p>
+      <p>Current Light: ${activePlant.currentLight}</p>
       <p>Happiness: ${activePlant.happiness}%</p>
       <p>Watered ${activePlant.stageCare.water}x / Sunlight ${activePlant.stageCare.sun}x</p>
       <button onclick="giveWater()">💧 Water</button>
       <button onclick="giveSunlight()">☀️ Sunlight</button>
     </div>`;
   plantInfo.innerHTML = lightSelector + stats;
+  document.getElementById("light-level").value = activePlant.currentLight;
+  setLightIntensity(activePlant.currentLight);
 }
 
 function giveWater() {
