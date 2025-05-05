@@ -307,4 +307,4 @@ aiForm.addEventListener("submit", async (e) => {
     console.error("Error fetching plant tip:", err);
     document.getElementById("ai-response").innerText = "Failed to fetch tip.";
   }
-}
+});
