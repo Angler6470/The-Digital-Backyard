@@ -152,8 +152,15 @@ Respond in JSON format with these keys: waterInterval, sunInterval, sunlightType
       ]
     });
 
-    const jsonText = chat.choices[0].message.content;
-    const clean = JSON.parse(jsonText);
+    let jsonText = chat.choices[0].message.content.trim();
+
+// Remove ```json or ``` and closing ```
+if (jsonText.startsWith("```")) {
+  jsonText = jsonText.replace(/```(?:json)?/gi, "").replace(/```$/, "").trim();
+}
+
+const clean = JSON.parse(jsonText);
+
     res.json(clean);
   } catch (err) {
     console.error("Error fetching GPT plant profile:", err);
