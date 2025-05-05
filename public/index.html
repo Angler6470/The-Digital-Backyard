@@ -1,3 +1,4 @@
+<!-- File: index.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,30 +6,57 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Welcome to PlantPal</h1>
+  <a href="index.html"><img src="images/logo.png" alt="PlantPal Logo" class="logo"></a>
 
   <section id="plant-selection">
     <h2>Choose Your Plant</h2>
-    <div id="plant-gallery">
-      <!-- Plant options will be inserted here by script.js -->
-    </div>
+    <div id="plant-gallery"></div>
+    <ul style="text-align:center; font-size: 0.95rem; margin-top: 1rem; color: #333; list-style-position: inside; padding-left: 0;">
+      <li>1. Choose your flora buddy.</li>
+      <li>2. Give it a nickname and raise it with love.</li>
+      <li>3. Keep it watered and give it sunshine.</li>
+      <li>4. Ask AI for help when your plant looks bummed.</li>
+      <li>5. Watch it grow, evolve, and thrive. 🌱</li>
+    </ul>
+    <p style="text-align:center; font-size: 0.75rem; color: #888; margin-top: 0.5rem;">
+      (© 1993 PlantPal Systems Intl.)
+    </p>
+  </section>
+
+  <section id="env-select" style="display:none; text-align: center;">
+    <h2>Where will your plant live?</h2>
+    <button onclick="setEnvironment('indoor')">🏠 Indoors</button>
+    <button onclick="setEnvironment('outdoor')">🌤️ Outdoors</button>
   </section>
 
   <section id="active-plant" style="display:none;">
     <h2>Your Virtual Plant</h2>
+    <div id="plant-visual" style="text-align: center; font-size: 4rem; margin-bottom: 1rem;">
+      🌱 <!-- Placeholder emoji or image for the plant -->
+    </div>
     <div id="plant-info"></div>
-    <button onclick="showCareForm()">Care for Plant</button>
   </section>
 
   <section id="care-form" style="display:none;">
     <h2>Give Your Plant Some Love</h2>
     <form id="ai-form">
       <input type="text" id="nickname" placeholder="Plant nickname" required />
-      <input type="text" id="species" placeholder="Species" required />
+      <select id="species" required></select>
       <textarea id="issue" placeholder="Describe the issue..." required></textarea>
       <button type="submit">Ask AI</button>
     </form>
     <div id="ai-response"></div>
+  </section>
+
+  <section id="plant-profile" style="text-align:center; margin-top: 2rem;">
+    <h2>🌤 Generate Care Profile</h2>
+    <select id="profileSpecies"></select>
+    <select id="profileEnvironment">
+      <option value="indoor">Indoor</option>
+      <option value="outdoor">Outdoor</option>
+    </select>
+    <button onclick="generateProfile()">🧪 Get Care Profile</button>
+    <pre id="profileOutput" style="text-align:left; margin-top: 1rem; max-width: 600px; margin-inline: auto; background:#f9f9f9; padding: 1rem; border-radius: 10px;"></pre>
   </section>
 
   <script src="script.js"></script>

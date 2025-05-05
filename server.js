@@ -127,4 +127,38 @@ app.post('/plant-tips', async (req, res) => {
   }
 });
 
+// New GPT-powered plant profile endpoint
+app.post("/plant-profile", async (req, res) => {
+  const { species, environment } = req.body;
+
+  const prompt = `You are a plant care expert. Provide a care profile for a ${species} kept in ${environment} conditions. Include:
+- How often it should be watered (in hours)
+- How often it should get sunlight (in hours)
+- Type of sunlight it prefers (e.g. direct, indirect, shade)
+- Ideal temperature range (°F)
+- Minimum and maximum daily sunlight exposure in hours
+- Risk or damage from overexposure (e.g. leaf burn)
+- Evolving care needs across growth stages (Seed, Seedling, Sprout, Bud, Bloom, Mature)
+
+Respond in JSON format with these keys: waterInterval, sunInterval, sunlightType, minLightHours, maxLightHours, sunRisk, tempRange, stageNeeds.`;
+
+
+  try {
+    const chat = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        { role: "system", content: "You are a helpful plant care assistant." },
+        { role: "user", content: prompt }
+      ]
+    });
+
+    const jsonText = chat.choices[0].message.content;
+    const clean = JSON.parse(jsonText);
+    res.json(clean);
+  } catch (err) {
+    console.error("Error fetching GPT plant profile:", err);
+    res.status(500).json({ error: "Failed to get plant care data." });
+  }
+});
+
 app.listen(PORT, () => console.log(`PlantPal server running on port ${PORT}`));

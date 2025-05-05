@@ -1,4 +1,8 @@
-// --- Load Plants to Choose From ---
+// File: script.js
+
+// PlantPal: Combined Plant Selection + Virtual Plant Logic
+
+// List of plants the user can choose from
 const plantOptions = [
   { name: "Sunflower", image: "🌻" },
   { name: "Aloe Vera", image: "🪴" },
@@ -22,121 +26,151 @@ const plantOptions = [
   { name: "Maple Leaf", image: "🍂" }
 ];
 
-let plantStats = {
-  happiness: 100,
-  thirst: 0,
-  sunlight: 50,
-  stage: "Seedling"
-};
+window.plantOptions = plantOptions;
 
-const gallery = document.getElementById('plant-gallery');
-const selectionSection = document.getElementById('plant-selection');
-const activePlantSection = document.getElementById('active-plant');
-const careFormSection = document.getElementById('care-form');
-const plantInfo = document.getElementById('plant-info');
+let activePlant = null;
+const careProfileCache = {}; // 🌿 Caches GPT responses for species+environment combos
 
-plantOptions.forEach(plant => {
-  const card = document.createElement('button');
-  card.className = 'plant-card';
+const gallery = document.getElementById("plant-gallery");
+const selectionSection = document.getElementById("plant-selection");
+const activePlantSection = document.getElementById("active-plant");
+const plantInfo = document.getElementById("plant-info");
+
+plantOptions.forEach((plant, index) => {
+  const card = document.createElement("button");
+  card.className = "plant-card";
   card.innerHTML = `<div class="emoji">${plant.image}</div>`;
   card.title = plant.name;
-  card.onclick = () => selectPlant(plant);
+  card.onclick = () => selectPlant(plant, index);
   gallery.appendChild(card);
 });
 
-function selectPlant(plant) {
-  selectionSection.style.display = 'none';
-  activePlantSection.style.display = 'block';
-  updatePlantInfo(plant);
-
-  // Send selected plant to backend
-  fetch('/digital-plant', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      user_id: 1, // Replace with actual user ID logic later
-      species: plant.name,
-      nickname: plant.name
-    })
-  })
-    .then(res => res.json())
-    .then(data => console.log('Digital plant saved:', data))
-    .catch(err => console.error('Error saving digital plant:', err));
-
-  addCareButtons();
+function populateDropdown(id) {
+  const select = document.getElementById(id);
+  plantOptions.forEach(plant => {
+    const option = document.createElement("option");
+    option.value = plant.name.toLowerCase();
+    option.textContent = plant.name;
+    select.appendChild(option);
+  });
 }
 
-function updatePlantInfo(plant) {
-  plantInfo.innerHTML = `
-    <h3>${plant.name} ${plant.image}</h3>
-    <p>Stage: ${plantStats.stage}</p>
-    <p>Happiness: ${plantStats.happiness}%</p>
-    <p>Thirst: ${plantStats.thirst}%</p>
-    <p>Sunlight: ${plantStats.sunlight}%</p>
-  `;
+populateDropdown("species");
+populateDropdown("profileSpecies");
+
+function selectPlant(plant, id) {
+  selectionSection.style.display = "none";
+  document.getElementById("env-select").style.display = "block";
+  const selectedPlant = {
+    id,
+    species: plant.name,
+    nickname: plant.name
+  };
+  window.selectedPlant = selectedPlant;
+
+  document.getElementById("nickname").value = selectedPlant.nickname;
+  document.getElementById("species").value = selectedPlant.species.toLowerCase();
 }
 
-function addCareButtons() {
-  const actions = document.createElement('div');
-  actions.id = 'care-actions';
+function setEnvironment(env) {
+  const plant = window.selectedPlant;
+  const cacheKey = `${plant.species.toLowerCase()}-${env}`;
 
-  const waterBtn = document.createElement('button');
-  waterBtn.innerText = '💧 Water';
-  waterBtn.onclick = () => {
-    plantStats.thirst = Math.max(0, plantStats.thirst - 20);
-    plantStats.happiness = Math.min(100, plantStats.happiness + 5);
-    updatePlantInfo({ name: "", image: "" });
+  const useProfile = (care) => {
+    activePlant = {
+      id: plant.id,
+      species: plant.species,
+      nickname: plant.nickname,
+      environment: env,
+      temp: env === "indoor" ? 72 : 65,
+      stage: "Seed",
+      happiness: 100,
+      stageCare: { water: 0, sun: 0 },
+      sunlightType: care.sunlightType,
+      tempRange: care.tempRange,
+      stageNeeds: care.stageNeeds,
+      minLightHours: care.minLightHours,
+      maxLightHours: care.maxLightHours,
+      sunRisk: care.sunRisk
+    };
+    document.getElementById("env-select").style.display = "none";
+    activePlantSection.style.display = "block";
+    updatePlantInfo();
   };
 
-  const sunBtn = document.createElement('button');
-  sunBtn.innerText = '☀️ Sunlight';
-  sunBtn.onclick = () => {
-    plantStats.sunlight = Math.min(100, plantStats.sunlight + 10);
-    plantStats.happiness = Math.min(100, plantStats.happiness + 3);
-    updatePlantInfo({ name: "", image: "" });
-  };
-
-  const shadeBtn = document.createElement('button');
-  shadeBtn.innerText = '🌥️ Shade';
-  shadeBtn.onclick = () => {
-    plantStats.sunlight = Math.max(0, plantStats.sunlight - 10);
-    plantStats.happiness = Math.min(100, plantStats.happiness + 2);
-    updatePlantInfo({ name: "", image: "" });
-  };
-
-  actions.appendChild(waterBtn);
-  actions.appendChild(sunBtn);
-  actions.appendChild(shadeBtn);
-
-  plantInfo.appendChild(actions);
-}
-
-function showCareForm() {
-  careFormSection.style.display = 'block';
-}
-
-// Handle AI form submission
-const aiForm = document.getElementById('ai-form');
-aiForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const nickname = document.getElementById('nickname').value;
-  const species = document.getElementById('species').value;
-  const issue = document.getElementById('issue').value;
-  const responseDiv = document.getElementById('ai-response');
-
-  responseDiv.innerHTML = 'Thinking... 🌱';
-
-  try {
-    const res = await fetch('/plant-tips', {
+  if (careProfileCache[cacheKey]) {
+    useProfile(careProfileCache[cacheKey]);
+  } else {
+    fetch('/plant-profile', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ species: plant.species, environment: env })
+    })
+      .then(res => res.json())
+      .then(care => {
+        careProfileCache[cacheKey] = care;
+        useProfile(care);
+      })
+      .catch(err => {
+        console.error('Failed to load care profile:', err);
+        alert("Failed to load care info. Please try again.");
+      });
+  }
+}
+
+function generateProfile() {
+  const species = document.getElementById('profileSpecies').value;
+  const environment = document.getElementById('profileEnvironment').value;
+  const key = `${species}-${environment}`;
+
+  if (careProfileCache[key]) {
+    document.getElementById('profileOutput').innerText = JSON.stringify(careProfileCache[key], null, 2);
+    return;
+  }
+
+  fetch('/plant-profile', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ species, environment })
+  })
+    .then(res => res.json())
+    .then(data => {
+      careProfileCache[key] = data;
+      document.getElementById('profileOutput').innerText = JSON.stringify(data, null, 2);
+    })
+    .catch(err => {
+      console.error('Error generating profile:', err);
+      document.getElementById('profileOutput').innerText = "Failed to get profile.";
+    });
+}
+
+// AI form submission with personality/emotion feedback
+const aiForm = document.getElementById("ai-form");
+aiForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const nickname = document.getElementById("nickname").value;
+  const species = document.getElementById("species").value;
+  const issue = document.getElementById("issue").value;
+
+  try {
+    const res = await fetch("/plant-tips", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nickname, species, issue })
     });
-
     const data = await res.json();
-    responseDiv.innerText = data.tip;
+
+    // Add emotion-based prefix
+    let moodIcon = "🪴";
+    const text = data.tip.toLowerCase();
+    if (text.includes("great") || text.includes("thriving")) moodIcon = "😄";
+    else if (text.includes("sad") || text.includes("drooping") || text.includes("struggling")) moodIcon = "😢";
+    else if (text.includes("burn") || text.includes("overwater")) moodIcon = "⚠️";
+    else if (text.includes("happy") || text.includes("love")) moodIcon = "💚";
+
+    document.getElementById("ai-response").innerText = `${moodIcon} ${data.tip}`;
   } catch (err) {
-    responseDiv.innerText = 'Something went wrong. Please try again.';
+    console.error("Error fetching plant tip:", err);
+    document.getElementById("ai-response").innerText = "Failed to fetch tip.";
   }
 });
