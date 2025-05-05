@@ -1,5 +1,3 @@
-/* File: style.css */
-
 body {
   font-family: sans-serif;
   margin: 0;
@@ -82,7 +80,7 @@ form {
   padding: 1rem;
 }
 
-input, textarea, select {
+input, textarea {
   font-size: 1rem;
   padding: 0.5rem;
   border: 1px solid #ccc;
@@ -106,14 +104,40 @@ button:hover {
   background-color: #66bb6a;
 }
 
-#loading-spinner.spinner-animate {
-  animation: pulse 1s infinite;
+.sunlight-alert {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+  padding: 0.4rem 0.6rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  animation: slideFade 0.3s ease-out;
+  text-align: center;
 }
 
-@keyframes pulse {
-  0% { opacity: 0.2; }
-  50% { opacity: 1; }
-  100% { opacity: 0.2; }
+@keyframes slideFade {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.flash {
+  animation: glowFlash 1s ease-in-out infinite alternate;
+}
+
+@keyframes glowFlash {
+  from {
+    box-shadow: 0 0 5px 2px rgba(255, 193, 7, 0.6);
+  }
+  to {
+    box-shadow: 0 0 12px 4px rgba(255, 193, 7, 0.9);
+  }
 }
 
 @media (max-width: 480px) {
@@ -133,7 +157,7 @@ button:hover {
     font-size: 0.95rem;
   }
 
-  input, textarea, select {
+  input, textarea {
     font-size: 0.95rem;
   }
 }
