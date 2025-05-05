@@ -138,6 +138,10 @@ app.post("/plant-profile", async (req, res) => {
 - Minimum and maximum daily sunlight exposure in hours
 - Risk or damage from overexposure (e.g. leaf burn)
 - Evolving care needs across growth stages (Seed, Seedling, Sprout, Bud, Bloom, Mature)
+- Also include fertilizer needs for each life stage (Seed, Seedling, Sprout, Bud, Bloom, Mature), including:
+- NPK ratio
+- Feeding frequency
+- Risk of overfeeding
 
 Respond in JSON format with these keys: waterInterval, sunInterval, sunlightType, minLightHours, maxLightHours, sunRisk, tempRange, stageNeeds.`;
 
