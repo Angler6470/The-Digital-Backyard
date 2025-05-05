@@ -26,10 +26,8 @@ const plantOptions = [
   { name: "Maple Leaf", image: "🍂" }
 ];
 
-window.plantOptions = plantOptions;
-
 let activePlant = null;
-const careProfileCache = {}; // 🌿 Caches GPT responses for species+environment combos
+const careProfileCache = {};
 
 const gallery = document.getElementById("plant-gallery");
 const selectionSection = document.getElementById("plant-selection");
@@ -37,17 +35,9 @@ const activePlantSection = document.getElementById("active-plant");
 const plantInfo = document.getElementById("plant-info");
 const loadingSpinner = document.getElementById("loading-spinner");
 
-plantOptions.forEach((plant, index) => {
-  const card = document.createElement("button");
-  card.className = "plant-card";
-  card.innerHTML = `<div class="emoji">${plant.image}</div>`;
-  card.title = plant.name;
-  card.onclick = () => selectPlant(plant, index);
-  gallery.appendChild(card);
-});
-
 function populateDropdown(id) {
   const select = document.getElementById(id);
+  if (!select) return;
   plantOptions.forEach(plant => {
     const option = document.createElement("option");
     option.value = plant.name.toLowerCase();
@@ -59,6 +49,15 @@ function populateDropdown(id) {
 populateDropdown("species");
 populateDropdown("profileSpecies");
 
+plantOptions.forEach((plant, index) => {
+  const card = document.createElement("button");
+  card.className = "plant-card";
+  card.innerHTML = `<div class="emoji">${plant.image}</div>`;
+  card.title = plant.name;
+  card.onclick = () => selectPlant(plant, index);
+  gallery.appendChild(card);
+});
+
 function selectPlant(plant, id) {
   selectionSection.style.display = "none";
   document.getElementById("env-select").style.display = "block";
@@ -68,7 +67,6 @@ function selectPlant(plant, id) {
     nickname: plant.name
   };
   window.selectedPlant = selectedPlant;
-
   document.getElementById("nickname").value = selectedPlant.nickname;
   document.getElementById("species").value = selectedPlant.species.toLowerCase();
 }
@@ -122,6 +120,82 @@ function setEnvironment(env) {
         loadingSpinner.style.display = "none";
         loadingSpinner.classList.remove("spinner-animate");
       });
+  }
+}
+
+function updatePlantInfo() {
+  const lightSelector = `
+    <div style="margin: 0.5rem 0;">
+      <label>Light Level:</label>
+      <select id="light-level" onchange="setLightIntensity(this.value)">
+        <option value="shade">🌑 Shade</option>
+        <option value="indirect">⛅ Indirect</option>
+        <option value="direct">☀️ Direct</option>
+      </select>
+    </div>`;
+  const visual = document.getElementById("plant-visual");
+  let stageEmoji = "🌱";
+  switch (activePlant.stage) {
+    case "Seed": stageEmoji = "🫘"; break;
+    case "Seedling": stageEmoji = "🌱"; break;
+    case "Sprout": stageEmoji = "🌿"; break;
+    case "Bud": stageEmoji = "🌾"; break;
+    case "Bloom": stageEmoji = "🌸"; break;
+    case "Mature": stageEmoji = "🌳"; break;
+  }
+  visual.innerHTML = stageEmoji;
+  const stats = `
+    <div style="margin-top: 0.5rem;">
+      <h3>${activePlant.nickname} (${activePlant.species})</h3>
+      <p>Stage: ${activePlant.stage}</p>
+      <p>Sunlight: ${activePlant.sunlightType} (${activePlant.minLightHours}-${activePlant.maxLightHours} hrs/day)</p>
+      <p style="font-size: 0.9rem; color: #666;">⚠️ ${activePlant.sunRisk}</p>
+      <p>Temp: ${activePlant.temp}°F (Ideal: ${activePlant.tempRange})</p>
+      <p>Happiness: ${activePlant.happiness}%</p>
+      <p>Watered ${activePlant.stageCare.water}x / Sunlight ${activePlant.stageCare.sun}x</p>
+      <button onclick="giveWater()">💧 Water</button>
+      <button onclick="giveSunlight()">☀️ Sunlight</button>
+    </div>`;
+  plantInfo.innerHTML = lightSelector + stats;
+}
+
+function giveWater() {
+  activePlant.stageCare.water++;
+  activePlant.happiness = Math.min(100, activePlant.happiness + 5);
+  updatePlantInfo();
+  checkGrowthStage();
+}
+
+function giveSunlight() {
+  activePlant.stageCare.sun++;
+  activePlant.happiness = Math.min(100, activePlant.happiness + 3);
+  updatePlantInfo();
+  checkGrowthStage();
+}
+
+function checkGrowthStage() {
+  const current = activePlant.stage;
+  const order = ["Seed", "Seedling", "Sprout", "Bud", "Bloom", "Mature"];
+  const index = order.indexOf(current);
+  if (index === -1 || index === order.length - 1) return;
+  const needs = activePlant.stageNeeds[current];
+  if (
+    activePlant.stageCare.water >= needs.water &&
+    activePlant.stageCare.sun >= needs.sun
+  ) {
+    const plantVisual = document.getElementById("plant-visual");
+    plantVisual.classList.add("level-up-flash");
+    const msg = document.createElement("div");
+    msg.id = "level-up-text";
+    msg.textContent = "🌟 LEVEL UP! 🌟";
+    plantVisual.before(msg);
+    setTimeout(() => {
+      plantVisual.classList.remove("level-up-flash");
+      msg.remove();
+    }, 2000);
+    activePlant.stage = order[index + 1];
+    activePlant.stageCare = { water: 0, sun: 0 };
+    updatePlantInfo();
   }
 }
 
