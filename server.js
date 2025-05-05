@@ -1,4 +1,3 @@
-// --- Backend (Express.js) with PostgreSQL and OpenAI v4 ---
 // File: server.js
 const express = require('express');
 const { Pool } = require('pg');
@@ -127,7 +126,7 @@ app.post('/plant-tips', async (req, res) => {
   }
 });
 
-// New GPT-powered plant profile endpoint
+// GPT-powered plant profile endpoint with code block strip
 app.post("/plant-profile", async (req, res) => {
   const { species, environment } = req.body;
 
@@ -142,7 +141,6 @@ app.post("/plant-profile", async (req, res) => {
 
 Respond in JSON format with these keys: waterInterval, sunInterval, sunlightType, minLightHours, maxLightHours, sunRisk, tempRange, stageNeeds.`;
 
-
   try {
     const chat = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
@@ -154,13 +152,11 @@ Respond in JSON format with these keys: waterInterval, sunInterval, sunlightType
 
     let jsonText = chat.choices[0].message.content.trim();
 
-// Remove ```json or ``` and closing ```
-if (jsonText.startsWith("```")) {
-  jsonText = jsonText.replace(/```(?:json)?/gi, "").replace(/```$/, "").trim();
-}
+    if (jsonText.startsWith("```")) {
+      jsonText = jsonText.replace(/```(?:json)?/gi, "").replace(/```$/, "").trim();
+    }
 
-const clean = JSON.parse(jsonText);
-
+    const clean = JSON.parse(jsonText);
     res.json(clean);
   } catch (err) {
     console.error("Error fetching GPT plant profile:", err);
