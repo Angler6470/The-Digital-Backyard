@@ -2,7 +2,6 @@
 
 // PlantPal: Combined Plant Selection + Virtual Plant Logic
 
-// List of plants the user can choose from
 const plantOptions = [
   { name: "Sunflower", image: "🌻" },
   { name: "Aloe Vera", image: "🪴" },
@@ -143,9 +142,6 @@ function setLightIntensity(value) {
     plantInfo.style.border = "2px solid transparent";
     const alert = document.getElementById("light-warning");
     if (alert) alert.remove();
-  }
-} else {
-    plantInfo.style.border = "2px solid transparent";
   }
 }
 
