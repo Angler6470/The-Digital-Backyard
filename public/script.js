@@ -76,7 +76,7 @@ function setEnvironment(env) {
   loadingSpinner.style.display = "block";
   loadingSpinner.classList.add("spinner-animate");
 
-  const useProfile = (care) => {
+  const useProfile = (care, isOffline = false) => {
     activePlant = {
       id: plant.id,
       species: plant.species,
@@ -115,12 +115,68 @@ function setEnvironment(env) {
         useProfile(care);
       })
       .catch(err => {
-        console.error('Failed to load care profile:', err);
-        alert("Failed to load care info. Please try again.");
-        loadingSpinner.style.display = "none";
-        loadingSpinner.classList.remove("spinner-animate");
+        console.warn('Offline fallback triggered. Using default care profile.');
+        const defaultCare = {
+          sunlightType: "indirect",
+          tempRange: "60–75°F",
+          stageNeeds: {
+            Seed: { water: 1, sun: 1 },
+            Seedling: { water: 2, sun: 2 },
+            Sprout: { water: 2, sun: 2 },
+            Bud: { water: 3, sun: 3 },
+            Bloom: { water: 3, sun: 3 },
+            Mature: { water: 4, sun: 4 }
+          },
+          minLightHours: 2,
+          maxLightHours: 6,
+          sunRisk: "Leaves may burn with too much direct sunlight."
+        };
+        useProfile(defaultCare, true);
       });
   }
+}
+
+function generateProfile() {
+  const species = document.getElementById('profileSpecies').value;
+  const environment = document.getElementById('profileEnvironment').value;
+  const key = `${species}-${environment}`;
+  const output = document.getElementById('profileOutput');
+
+  if (careProfileCache[key]) {
+    output.innerText = JSON.stringify(careProfileCache[key], null, 2);
+    return;
+  }
+
+  fetch('/plant-profile', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ species, environment })
+  })
+    .then(res => res.json())
+    .then(data => {
+      careProfileCache[key] = data;
+      output.innerText = JSON.stringify(data, null, 2);
+    })
+    .catch(err => {
+      console.warn("Offline fallback for profile generation");
+      const defaultProfile = {
+        sunlightType: "indirect",
+        tempRange: "60–75°F",
+        stageNeeds: {
+          Seed: { water: 1, sun: 1 },
+          Seedling: { water: 2, sun: 2 },
+          Sprout: { water: 2, sun: 2 },
+          Bud: { water: 3, sun: 3 },
+          Bloom: { water: 3, sun: 3 },
+          Mature: { water: 4, sun: 4 }
+        },
+        minLightHours: 2,
+        maxLightHours: 6,
+        sunRisk: "Leaves may burn with too much direct sunlight."
+      };
+      const offlineNote = { ...defaultProfile, note: "(offline default data)" };
+      output.innerText = JSON.stringify(offlineNote, null, 2);
+    });
 }
 
 function setLightIntensity(value) {
@@ -224,32 +280,6 @@ function checkGrowthStage() {
   }
 }
 
-function generateProfile() {
-  const species = document.getElementById('profileSpecies').value;
-  const environment = document.getElementById('profileEnvironment').value;
-  const key = `${species}-${environment}`;
-
-  if (careProfileCache[key]) {
-    document.getElementById('profileOutput').innerText = JSON.stringify(careProfileCache[key], null, 2);
-    return;
-  }
-
-  fetch('/plant-profile', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ species, environment })
-  })
-    .then(res => res.json())
-    .then(data => {
-      careProfileCache[key] = data;
-      document.getElementById('profileOutput').innerText = JSON.stringify(data, null, 2);
-    })
-    .catch(err => {
-      console.error('Error generating profile:', err);
-      document.getElementById('profileOutput').innerText = "Failed to get profile.";
-    });
-}
-
 const aiForm = document.getElementById("ai-form");
 aiForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -277,4 +307,4 @@ aiForm.addEventListener("submit", async (e) => {
     console.error("Error fetching plant tip:", err);
     document.getElementById("ai-response").innerText = "Failed to fetch tip.";
   }
-});
+}
