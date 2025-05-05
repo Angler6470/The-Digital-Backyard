@@ -151,6 +151,27 @@ button:hover {
   animation: slideFade 0.3s ease-out;
 }
 
+.npk-input {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  margin: 0.5rem 0;
+}
+
+.npk-input input {
+  width: 2.5rem;
+  padding: 0.2rem;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+}
+
+.npk-input label {
+  font-size: 0.9rem;
+  margin-right: 0.25rem;
+}
+
 @media (max-width: 480px) {
   h1 {
     font-size: 1.5rem;
