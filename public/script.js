@@ -35,6 +35,7 @@ const gallery = document.getElementById("plant-gallery");
 const selectionSection = document.getElementById("plant-selection");
 const activePlantSection = document.getElementById("active-plant");
 const plantInfo = document.getElementById("plant-info");
+const loadingSpinner = document.getElementById("loading-spinner");
 
 plantOptions.forEach((plant, index) => {
   const card = document.createElement("button");
@@ -75,6 +76,8 @@ function selectPlant(plant, id) {
 function setEnvironment(env) {
   const plant = window.selectedPlant;
   const cacheKey = `${plant.species.toLowerCase()}-${env}`;
+  loadingSpinner.style.display = "block";
+  loadingSpinner.classList.add("spinner-animate");
 
   const useProfile = (care) => {
     activePlant = {
@@ -96,6 +99,8 @@ function setEnvironment(env) {
     document.getElementById("env-select").style.display = "none";
     activePlantSection.style.display = "block";
     updatePlantInfo();
+    loadingSpinner.style.display = "none";
+    loadingSpinner.classList.remove("spinner-animate");
   };
 
   if (careProfileCache[cacheKey]) {
@@ -114,6 +119,8 @@ function setEnvironment(env) {
       .catch(err => {
         console.error('Failed to load care profile:', err);
         alert("Failed to load care info. Please try again.");
+        loadingSpinner.style.display = "none";
+        loadingSpinner.classList.remove("spinner-animate");
       });
   }
 }
@@ -144,7 +151,6 @@ function generateProfile() {
     });
 }
 
-// AI form submission with personality/emotion feedback
 const aiForm = document.getElementById("ai-form");
 aiForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -160,7 +166,6 @@ aiForm.addEventListener("submit", async (e) => {
     });
     const data = await res.json();
 
-    // Add emotion-based prefix
     let moodIcon = "🪴";
     const text = data.tip.toLowerCase();
     if (text.includes("great") || text.includes("thriving")) moodIcon = "😄";
