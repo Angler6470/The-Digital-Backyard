@@ -1,4 +1,3 @@
-<!-- File: index.html -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,7 +25,7 @@
   <section id="env-select" style="display:none; text-align: center;">
     <h2>Where will your plant live?</h2>
     <button onclick="setEnvironment('indoor')">🏠 Indoors</button>
-    <button onclick="setEnvironment('outdoor')">🌤️ Outdoors</button>
+    <button onclick="setEnvironment('outdoor')">☄️ Outdoors</button>
   </section>
 
   <section id="active-plant" style="display:none;">
@@ -35,28 +34,20 @@
       🌱 <!-- Placeholder emoji or image for the plant -->
     </div>
     <div id="plant-info"></div>
+    <div id="loading-spinner" style="display:none; text-align:center; font-style:italic; color:#555; margin-top:1rem;">
+      🌿 Generating care info...
+    </div>
   </section>
 
   <section id="care-form" style="display:none;">
     <h2>Give Your Plant Some Love</h2>
     <form id="ai-form">
       <input type="text" id="nickname" placeholder="Plant nickname" required />
-      <select id="species" required></select>
+      <input type="text" id="species" placeholder="Species" required />
       <textarea id="issue" placeholder="Describe the issue..." required></textarea>
       <button type="submit">Ask AI</button>
     </form>
     <div id="ai-response"></div>
-  </section>
-
-  <section id="plant-profile" style="text-align:center; margin-top: 2rem;">
-    <h2>🌤 Generate Care Profile</h2>
-    <select id="profileSpecies"></select>
-    <select id="profileEnvironment">
-      <option value="indoor">Indoor</option>
-      <option value="outdoor">Outdoor</option>
-    </select>
-    <button onclick="generateProfile()">🧪 Get Care Profile</button>
-    <pre id="profileOutput" style="text-align:left; margin-top: 1rem; max-width: 600px; margin-inline: auto; background:#f9f9f9; padding: 1rem; border-radius: 10px;"></pre>
   </section>
 
   <script src="script.js"></script>
