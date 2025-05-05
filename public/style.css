@@ -140,6 +140,17 @@ button:hover {
   }
 }
 
+.fertilizer-info {
+  background-color: #f0fff0;
+  border: 1px solid #c2e0c2;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  box-shadow: 0 0 6px rgba(100, 150, 100, 0.2);
+  animation: slideFade 0.3s ease-out;
+}
+
 @media (max-width: 480px) {
   h1 {
     font-size: 1.5rem;
