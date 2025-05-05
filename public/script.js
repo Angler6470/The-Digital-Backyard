@@ -127,8 +127,24 @@ function setEnvironment(env) {
 function setLightIntensity(value) {
   activePlant.currentLight = value;
   if (value !== activePlant.sunlightType) {
-    plantInfo.style.border = "2px dashed orange";
+    plantInfo.style.border = "3px dashed orange";
+
+    const alert = document.createElement("div");
+    alert.id = "light-warning";
+    alert.textContent = `⚠️ ${activePlant.nickname} prefers ${activePlant.sunlightType} light!`;
+    alert.className = "sunlight-alert";
+    if (!document.getElementById("light-warning")) {
+      plantInfo.prepend(alert);
+    }
+    setTimeout(() => {
+      alert.classList.add("flash");
+    }, 50);
   } else {
+    plantInfo.style.border = "2px solid transparent";
+    const alert = document.getElementById("light-warning");
+    if (alert) alert.remove();
+  }
+} else {
     plantInfo.style.border = "2px solid transparent";
   }
 }
