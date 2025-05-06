@@ -43,28 +43,28 @@
 
   <div class="fertilizer-info" style="display: none;">
   <p><strong>Fertilizer Info:</strong></p>
-  <p>Recommended NPK: ${fert.npk}</p>
+  <p>Recommended NPK: <span id="recommended-npk">5-5-5</span></p>
   <p>Your NPK:</p>
   <div class="npk-sliders">
     <div class="npk-slider-group">
       <label for="n-slider">N:</label>
-      <input type="range" id="n-slider" min="0" max="5" value="${getUserNValue(stage) || 0}" onchange="updateNPK('${stage}')">
-      <span id="n-value">${getUserNValue(stage) || 0}</span>
+      <input type="range" id="n-slider" min="0" max="5" value="0" onchange="updateNPK('seed')">
+      <span id="n-value">0</span>
     </div>
     <div class="npk-slider-group">
       <label for="p-slider">P:</label>
-      <input type="range" id="p-slider" min="0" max="5" value="${getUserPValue(stage) || 0}" onchange="updateNPK('${stage}')">
-      <span id="p-value">${getUserPValue(stage) || 0}</span>
+      <input type="range" id="p-slider" min="0" max="5" value="0" onchange="updateNPK('seed')">
+      <span id="p-value">0</span>
     </div>
     <div class="npk-slider-group">
       <label for="k-slider">K:</label>
-      <input type="range" id="k-slider" min="0" max="5" value="${getUserKValue(stage) || 0}" onchange="updateNPK('${stage}')">
-      <span id="k-value">${getUserKValue(stage) || 0}</span>
+      <input type="range" id="k-slider" min="0" max="5" value="0" onchange="updateNPK('seed')">
+      <span id="k-value">0</span>
     </div>
   </div>
   <p>Feed: every 2 weeks</p>
   <p>Overfeeding Risk: Low</p>
-  <p>Fed: ${activePlant.stageCare.fertilizer}x</p>
+  <p>Fed: <span id="fert-count">0</span>x</p>
   <button onclick="giveFertilizer()">🌾 Fertilize</button>
 </div>
 
