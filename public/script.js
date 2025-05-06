@@ -692,3 +692,13 @@ function clearLightTimer() {
 }
 
 console.log("PlantPal script with fertilizer logic loaded ✅");
+
+
+
+// 🔧 Injected by ChatGPT: Show fertilizer-info when environment is selected
+document.getElementById("env-select").addEventListener("change", function () {
+  const fertSection = document.querySelector('.fertilizer-info');
+  if (fertSection) {
+    fertSection.style.display = "block";
+  }
+});
