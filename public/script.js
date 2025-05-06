@@ -249,9 +249,51 @@ try {
 }
 
 async function setEnvironment(env) {
-if (!selectedPlant) {
-  showAlert("Please select a plant before setting the environment.", true);
-  return;
+  if (!selectedPlant) {
+    showAlert("Please select a plant before setting the environment.", true);
+    return;
+  }
+
+  // Load plant data here (assume activePlant is set)
+  // Example placeholder logic for assigning activePlant
+  activePlant = await fetchPlantProfile(selectedPlant.species, env);
+  const stage = activePlant?.stage || 'seed';
+
+  // Show plant section
+  document.getElementById("env-select").style.display = "none";
+  activePlantSection.style.display = "block";
+
+  // ✅ Dynamically update fertilizer UI
+  updateFertilizerInfo(stage);
+}
+
+function updateFertilizerInfo(stage) {
+  const fert = activePlant.fertilizer?.[stage];
+  const fertilizerSection = document.querySelector('.fertilizer-info');
+
+  if (!fert || !fertilizerSection) return;
+
+  // Update recommended NPK
+  document.getElementById("recommended-npk").textContent = fert.npk;
+
+  // Update NPK sliders and values
+  const n = getUserNValue(stage) || 0;
+  const p = getUserPValue(stage) || 0;
+  const k = getUserKValue(stage) || 0;
+
+  document.getElementById("n-slider").value = n;
+  document.getElementById("p-slider").value = p;
+  document.getElementById("k-slider").value = k;
+
+  document.getElementById("n-value").textContent = n;
+  document.getElementById("p-value").textContent = p;
+  document.getElementById("k-value").textContent = k;
+
+  // Update feed count
+  document.getElementById("fert-count").textContent = activePlant.stageCare.fertilizer;
+
+  // Finally reveal the section
+  fertilizerSection.style.display = "block";
 }
 
 loadingSpinner.style.display = "block";
