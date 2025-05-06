@@ -199,6 +199,10 @@ document.getElementById("env-select").style.display = "block";
 
 document.getElementById("nickname").value = selectedPlant.nickname;
 document.getElementById("species").value = selectedPlant.species.toLowerCase();
+  const fertSection = document.querySelector('.fertilizer-info');
+  if (fertSection) {
+    fertSection.style.display = "block";
+  }
 }
 
 // Utility function to display an alert message
@@ -692,13 +696,3 @@ function clearLightTimer() {
 }
 
 console.log("PlantPal script with fertilizer logic loaded ✅");
-
-
-
-// 🔧 Injected by ChatGPT: Show fertilizer-info when environment is selected
-document.getElementById("env-select").addEventListener("change", function () {
-  const fertSection = document.querySelector('.fertilizer-info');
-  if (fertSection) {
-    fertSection.style.display = "block";
-  }
-});
