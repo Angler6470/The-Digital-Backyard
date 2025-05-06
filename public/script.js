@@ -268,33 +268,50 @@ if (!profile) {
 }
 
 function useProfile(care, env) {
-activePlant = {
-  id: selectedPlant.id,
-  species: selectedPlant.species,
-  nickname: selectedPlant.nickname,
-  environment: env,
-  temp: env === "indoor" ? DEFAULT_TEMP_INDOOR : DEFAULT_TEMP_OUTDOOR,
-  stage: "Seed",
-  happiness: 100,
-  stageCare: {
-      water: 0,
-      sun: 0,
-      fertilizer: 0
-  },
-  ...care, // Use the spread operator to copy over fetched or default care profile.
-  customNPK: {},
-  currentLight: "indirect"
-};
+  // Transform fertilizer info if only present in stageNeeds
+  let fertilizer = care.fertilizer;
+  if (!fertilizer && care.stageNeeds) {
+    fertilizer = {};
+    for (const stage in care.stageNeeds) {
+      if (care.stageNeeds[stage].fertilizer) {
+        // Normalize keys to match frontend expectations
+        const fert = care.stageNeeds[stage].fertilizer;
+        fertilizer[stage] = {
+          npk: fert.NPK || fert.npk || '',
+          frequency: fert.feedingFrequency || fert.frequency || '',
+          risk: fert.overfeedingRisk || fert.risk || ''
+        };
+      }
+    }
+  }
+  activePlant = {
+    id: selectedPlant.id,
+    species: selectedPlant.species,
+    nickname: selectedPlant.nickname,
+    environment: env,
+    temp: env === "indoor" ? DEFAULT_TEMP_INDOOR : DEFAULT_TEMP_OUTDOOR,
+    stage: "Seed",
+    happiness: 100,
+    stageCare: {
+        water: 0,
+        sun: 0,
+        fertilizer: 0
+    },
+    ...care, // Use the spread operator to copy over fetched or default care profile.
+    fertilizer, // Overwrite with normalized fertilizer info
+    customNPK: {},
+    currentLight: "indirect"
+  };
 
-document.getElementById("env-select").style.display = "none";
-activePlantSection.style.display = "block";
-updatePlantInfo();
-loadingSpinner.style.display = "none";
-loadingSpinner.classList.remove("spinner-animate");
+  document.getElementById("env-select").style.display = "none";
+  activePlantSection.style.display = "block";
+  updatePlantInfo();
+  loadingSpinner.style.display = "none";
+  loadingSpinner.classList.remove("spinner-animate");
 
-startLightTimer("indirect");
-if (lightTimer) clearInterval(lightTimer);
-lightTimer = setInterval(handleLightDuration, 3000);
+  startLightTimer("indirect");
+  if (lightTimer) clearInterval(lightTimer);
+  lightTimer = setInterval(handleLightDuration, 3000);
 }
 
 async function generateProfile() {
