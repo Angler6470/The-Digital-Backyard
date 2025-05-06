@@ -41,6 +41,33 @@
     </div>
   </section>
 
+  <div class="fertilizer-info" style="display: none;">
+  <p><strong>Fertilizer Info:</strong></p>
+  <p>Recommended NPK: ${fert.npk}</p>
+  <p>Your NPK:</p>
+  <div class="npk-sliders">
+    <div class="npk-slider-group">
+      <label for="n-slider">N:</label>
+      <input type="range" id="n-slider" min="0" max="5" value="${getUserNValue(stage) || 0}" onchange="updateNPK('${stage}')">
+      <span id="n-value">${getUserNValue(stage) || 0}</span>
+    </div>
+    <div class="npk-slider-group">
+      <label for="p-slider">P:</label>
+      <input type="range" id="p-slider" min="0" max="5" value="${getUserPValue(stage) || 0}" onchange="updateNPK('${stage}')">
+      <span id="p-value">${getUserPValue(stage) || 0}</span>
+    </div>
+    <div class="npk-slider-group">
+      <label for="k-slider">K:</label>
+      <input type="range" id="k-slider" min="0" max="5" value="${getUserKValue(stage) || 0}" onchange="updateNPK('${stage}')">
+      <span id="k-value">${getUserKValue(stage) || 0}</span>
+    </div>
+  </div>
+  <p>Feed: every 2 weeks</p>
+  <p>Overfeeding Risk: Low</p>
+  <p>Fed: ${activePlant.stageCare.fertilizer}x</p>
+  <button onclick="giveFertilizer()">🌾 Fertilize</button>
+</div>
+
   <section id="care-form" style="display:none;">
     <h2>Give Your Plant Some Love</h2>
     <form id="ai-form">
