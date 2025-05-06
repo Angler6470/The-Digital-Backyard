@@ -199,10 +199,6 @@ document.getElementById("env-select").style.display = "block";
 
 document.getElementById("nickname").value = selectedPlant.nickname;
 document.getElementById("species").value = selectedPlant.species.toLowerCase();
-  const fertSection = document.querySelector('.fertilizer-info');
-  if (fertSection) {
-    fertSection.style.display = "block";
-  }
 }
 
 // Utility function to display an alert message
@@ -696,3 +692,34 @@ function clearLightTimer() {
 }
 
 console.log("PlantPal script with fertilizer logic loaded ✅");
+
+
+
+function updateFertilizerInfo(stage) {
+  const fert = activePlant.fertilizer?.[stage];
+  const fertilizerSection = document.querySelector('.fertilizer-info');
+
+  if (!fert || !fertilizerSection) return;
+
+  // Update recommended NPK
+  document.getElementById("recommended-npk").textContent = fert.npk;
+
+  // Update NPK sliders and values
+  const n = getUserNValue(stage) || 0;
+  const p = getUserPValue(stage) || 0;
+  const k = getUserKValue(stage) || 0;
+
+  document.getElementById("n-slider").value = n;
+  document.getElementById("p-slider").value = p;
+  document.getElementById("k-slider").value = k;
+
+  document.getElementById("n-value").textContent = n;
+  document.getElementById("p-value").textContent = p;
+  document.getElementById("k-value").textContent = k;
+
+  // Update feed count
+  document.getElementById("fert-count").textContent = activePlant.stageCare.fertilizer;
+
+  // Finally reveal the section
+  fertilizerSection.style.display = "block";
+}
