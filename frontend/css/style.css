@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+/* Main styles for Virtual Backyard Bird Sanctuary */
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #e0f7fa;
+  margin: 0;
+  padding: 0;
+}
+header {
+  background: linear-gradient(90deg, #43cea2 0%, #185a9d 100%);
+  color: #fff;
+  padding: 1.5rem 2vw;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  border-bottom: 4px solid #ffb300;
+  box-shadow: 0 4px 12px rgba(24,90,157,0.08);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+header h1 {
+  font-family: 'Fredoka One', 'Segoe UI', Arial, sans-serif;
+  font-size: 2.2rem;
+  letter-spacing: 2px;
+  margin: 0 1.5rem 0 0;
+  text-shadow: 2px 2px 0 #ffb300, 4px 4px 0 #fffde7;
+  white-space: nowrap;
+}
+header button, #earn-coins {
+  background: linear-gradient(90deg, #ffb300 0%, #ff9800 100%);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  padding: 0.7rem 1.5rem;
+  margin-left: 0;
+  font-size: 1.1rem;
+  font-family: 'Fredoka One', 'Segoe UI', Arial, sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(255,179,0,0.12);
+  transition: background 0.2s, transform 0.2s;
+  outline: none;
+  white-space: nowrap;
+}
+header button:hover, #earn-coins:hover {
+  background: linear-gradient(90deg, #ff9800 0%, #ffb300 100%);
+  transform: scale(1.07) rotate(-2deg);
+  box-shadow: 0 4px 16px rgba(255,179,0,0.18);
+}
+#currency-display {
+  font-size: 1.3rem;
+  background: #fffde7;
+  color: #ff9800;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  margin-left: 1.5rem;
+  font-family: 'Fredoka One', 'Segoe UI', Arial, sans-serif;
+  box-shadow: 0 2px 8px rgba(255,179,0,0.10);
+  border: 2px solid #ffb300;
+  white-space: nowrap;
+}
+#app {
+  width: 100vw;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+#backyard {
+  min-height: 70vh;
+  background: url('../images/backgrounds/day.png') center/cover no-repeat;
+  transition: background 1s;
+  position: relative;
+  width: 100vw;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+@media (max-width: 900px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem 2vw;
+    gap: 0.5rem;
+  }
+  header h1 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+  #currency-display {
+    font-size: 1rem;
+    margin-left: 0;
+    margin-bottom: 0.5rem;
+  }
+  #backyard {
+    min-height: 50vh;
+  }
+}
+/* Add more styles for birds, accessories, modals, etc. */

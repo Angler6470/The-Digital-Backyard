@@ -1,0 +1,35 @@
+# Node modules
+backend/node_modules/
+
+# Environment files
+backend/.env
+
+# Dependency lock files (optional, if you want to keep them local only)
+# backend/package-lock.json
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# IDE/project files
+.vscode/
+*.swp
+
+# Build output (if any in the future)
+dist/
+build/
+
+# Ignore by default any hidden files in backend except .env.example
+backend/.*
+!backend/.env.example
+
+# Ignore system files
+*.bak
+*.tmp
+
+# Ignore frontend build output (if any in the future)
+frontend/dist/
+frontend/build/
