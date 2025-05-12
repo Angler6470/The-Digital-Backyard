@@ -1,0 +1,51 @@
+[
+  {
+    "id": 1,
+    "name": "Sunflower Seed",
+    "type": "seed",
+    "image": "seed1.png",
+    "effectiveness": {"1":0.8,"2":0.7,"4":0.7,"5":0.7,"6":0.7,"7":0.7,"8":0.8,"9":0.8,"10":0.8}
+  },
+  {
+    "id": 2,
+    "name": "Peanuts",
+    "type": "peanuts",
+    "image": "peanuts1.png",
+    "effectiveness": {"2":0.9}
+  },
+  {
+    "id": 3,
+    "name": "Fruit",
+    "type": "fruit",
+    "image": "fruit1.png",
+    "effectiveness": {"1":0.7,"3":0.8}
+  },
+  {
+    "id": 4,
+    "name": "Suet",
+    "type": "suet",
+    "image": "suet1.png",
+    "effectiveness": {"7":0.9,"8":0.7}
+  },
+  {
+    "id": 5,
+    "name": "Thistle",
+    "type": "thistle",
+    "image": "thistle1.png",
+    "effectiveness": {"9":0.9}
+  },
+  {
+    "id": 6,
+    "name": "Worm",
+    "type": "worm",
+    "image": "worm1.png",
+    "effectiveness": {"3":0.7}
+  },
+  {
+    "id": 7,
+    "name": "Crumbs",
+    "type": "crumbs",
+    "image": "crumbs1.png",
+    "effectiveness": {"5":0.6}
+  }
+]

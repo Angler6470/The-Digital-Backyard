@@ -67,100 +67,22 @@ function updateDayNightCycle() {
   // TODO: Change background and bird activity based on real-world time/location
 }
 
-async function fetchShopItems() {
-  const jwt = localStorage.getItem('jwt');
-  if (!jwt) return { accessories: [], food: [] };
-  const [accRes, foodRes] = await Promise.all([
-    fetch('http://localhost:3001/api/shop/accessories', { headers: { 'Authorization': 'Bearer ' + jwt } }),
-    fetch('http://localhost:3001/api/shop/food', { headers: { 'Authorization': 'Bearer ' + jwt } })
-  ]);
-  const accessories = (await accRes.json()).accessories || [];
-  const food = (await foodRes.json()).food || [];
-  return { accessories, food };
-}
-
-async function fetchInventory() {
-  const jwt = localStorage.getItem('jwt');
-  if (!jwt) return { accessories: [], food: [] };
-  const res = await fetch('http://localhost:3001/api/shop/inventory', { headers: { 'Authorization': 'Bearer ' + jwt } });
-  return await res.json();
-}
-
-async function showShopModal() {
-  const shopDiv = document.createElement('div');
-  shopDiv.innerHTML = '<div>Loading shop...</div>';
-  showModal('Shop', shopDiv.outerHTML);
-  const { accessories, food } = await fetchShopItems();
-  let itemsHtml = '<h3>Accessories</h3>';
-  itemsHtml += accessories.map(item =>
-    `<div style='margin-bottom:1.2rem;padding:0.7rem 0.5rem 0.7rem 0.5rem;border-radius:10px;background:#f7f7f7;box-shadow:0 1px 4px #e0e0e0;display:flex;align-items:center;gap:16px;'>
-      <img src='images/accessories/${item.image}' alt='${item.name}' style='width:40px;height:40px;vertical-align:middle;margin-right:10px;'>
-      <div style='flex:1;'>
-        <strong>${item.name}</strong> <span style='color:#888;font-size:0.95em;'>(${item.type})</span><br>
-        <span style='font-size:0.97em;color:#555;'>${item.description || ''}</span>
-      </div>
-      <div style='text-align:right;'>
-        <span style='font-weight:bold;color:#43cea2;font-size:1.1em;'>${item.price} 🪙</span><br>
-        <button onclick='buyShopItemDynamic("accessory",${item.id},"${item.name}")'>Buy</button>
-      </div>
-    </div>`
-  ).join('');
-  itemsHtml += '<h3>Food</h3>';
-  itemsHtml += food.map(item =>
-    `<div style='margin-bottom:1rem;'>
-      <img src='images/accessories/${item.image}' alt='${item.name}' style='width:32px;vertical-align:middle;margin-right:8px;'>
-      <strong>${item.name}</strong> (${item.type})
-      <button onclick='buyShopItemDynamic("food",${item.id},"${item.name}")'>Buy</button>
-    </div>`
-  ).join('');
-  showModal('Shop', itemsHtml);
-}
-
-window.buyShopItemDynamic = async function(itemType, itemId, itemName) {
-  const jwt = localStorage.getItem('jwt');
-  // For demo, use a fixed price or fetch from backend if you add price column
-  const price = 10;
-  const res = await fetch('http://localhost:3001/api/yard/purchase', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt },
-    body: JSON.stringify({ itemType, itemId, price })
-  });
-  const data = await res.json();
-  if (data.success) {
-    alert(`You bought and placed a ${itemName} in your yard!`);
-    renderBackyard();
-    fetchAndDisplayPupCoins();
-  } else {
-    alert(data.error || 'Purchase failed');
-  }
-  showShopModal();
-}
-
-async function showInventoryModal() {
-  const invDiv = document.createElement('div');
-  invDiv.innerHTML = '<div>Loading inventory...</div>';
-  showModal('Your Inventory', invDiv.outerHTML);
-  const { accessories, food } = await fetchInventory();
-  let html = '<h3>Accessories</h3>';
-  html += accessories.length ? accessories.map(a =>
-    `<div style='margin-bottom:1rem;'><img src='images/accessories/${a.image}' alt='${a.name}' style='width:32px;vertical-align:middle;margin-right:8px;'><strong>${a.name}</strong> (${a.type})</div>`
-  ).join('') : '<div>None</div>';
-  html += '<h3>Food</h3>';
-  html += food.length ? food.map(f =>
-    `<div style='margin-bottom:1rem;'><img src='images/accessories/${f.image}' alt='${f.name}' style='width:32px;vertical-align:middle;margin-right:8px;'><strong>${f.name}</strong> (${f.type})</div>`
-  ).join('') : '<div>None</div>';
-  showModal('Your Inventory', html);
-}
-
 // --- Bird Encyclopedia ---
 let encyclopediaBirds = [];
 let userBackyardBirds = [];
 
 async function showBirdEncyclopediaModal() {
-  // Fetch encyclopedia data if not already loaded
+  // Only run the offline part if offline, otherwise call the API the first time like normal
   if (encyclopediaBirds.length === 0) {
-    const res = await fetch('http://localhost:3001/api/birds/encyclopedia');
-    encyclopediaBirds = await res.json();
+    if (!navigator.onLine) {
+      // Offline: load from static JSON
+      const res = await fetch('birds.json');
+      encyclopediaBirds = await res.json();
+    } else {
+      // Online: fetch from API
+      const res = await fetch('http://localhost:3001/api/birds/encyclopedia');
+      encyclopediaBirds = await res.json();
+    }
   }
   // Fetch user's backyard birds
   userBackyardBirds = await getUserBackyardBirdNames();
@@ -403,28 +325,104 @@ function startMeterGame() {
   };
 }
 
-function showHome() {
-  // Close any open modal and reset main view
-  document.getElementById('modal-container').innerHTML = '';
-  // Optionally, re-render the main backyard scene if needed
-  // renderBackyard();
-}
-
-function addHomeButton() {
-  const header = document.querySelector('header');
-  if (!document.getElementById('home-btn')) {
-    const btn = document.createElement('button');
-    btn.id = 'home-btn';
-    btn.textContent = 'Home';
-    btn.onclick = showHome;
-    header.insertBefore(btn, header.firstChild);
+// --- Shop ---
+async function fetchShopItems() {
+  // Only run the offline part if offline, otherwise call the API the first time like normal
+  if (!navigator.onLine) {
+    // Offline: load from static JSON
+    const [accRes, foodRes] = await Promise.all([
+      fetch('accessories.json'),
+      fetch('food.json')
+    ]);
+    const accessories = await accRes.json();
+    const food = await foodRes.json();
+    return { accessories, food };
+  } else {
+    // Online: fetch from API
+    const jwt = localStorage.getItem('jwt');
+    if (!jwt) return { accessories: [], food: [] };
+    const [accRes, foodRes] = await Promise.all([
+      fetch('http://localhost:3001/api/shop/accessories', { headers: { 'Authorization': 'Bearer ' + jwt } }),
+      fetch('http://localhost:3001/api/shop/food', { headers: { 'Authorization': 'Bearer ' + jwt } })
+    ]);
+    const accessories = (await accRes.json()).accessories || [];
+    const food = (await foodRes.json()).food || [];
+    return { accessories, food };
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  // ...existing code...
-  addHomeButton();
-});
+async function fetchInventory() {
+  const jwt = localStorage.getItem('jwt');
+  if (!jwt) return { accessories: [], food: [] };
+  const res = await fetch('http://localhost:3001/api/shop/inventory', { headers: { 'Authorization': 'Bearer ' + jwt } });
+  return await res.json();
+}
+
+async function showShopModal() {
+  const shopDiv = document.createElement('div');
+  shopDiv.innerHTML = '<div>Loading shop...</div>';
+  showModal('Shop', shopDiv.outerHTML);
+  const { accessories, food } = await fetchShopItems();
+  let itemsHtml = '<h3>Accessories</h3>';
+  itemsHtml += accessories.map(item =>
+    `<div style='margin-bottom:1.2rem;padding:0.7rem 0.5rem 0.7rem 0.5rem;border-radius:10px;background:#f7f7f7;box-shadow:0 1px 4px #e0e0e0;display:flex;align-items:center;gap:16px;'>
+      <img src='images/accessories/${item.image}' alt='${item.name}' style='width:40px;height:40px;vertical-align:middle;margin-right:10px;'>
+      <div style='flex:1;'>
+        <strong>${item.name}</strong> <span style='color:#888;font-size:0.95em;'>(${item.type})</span><br>
+        <span style='font-size:0.97em;color:#555;'>${item.description || ''}</span>
+      </div>
+      <div style='text-align:right;'>
+        <span style='font-weight:bold;color:#43cea2;font-size:1.1em;'>${item.price} 🪙</span><br>
+        <button onclick='buyShopItemDynamic("accessory",${item.id},"${item.name}")'>Buy</button>
+      </div>
+    </div>`
+  ).join('');
+  itemsHtml += '<h3>Food</h3>';
+  itemsHtml += food.map(item =>
+    `<div style='margin-bottom:1rem;'>
+      <img src='images/accessories/${item.image}' alt='${item.name}' style='width:32px;vertical-align:middle;margin-right:8px;'>
+      <strong>${item.name}</strong> (${item.type})
+      <button onclick='buyShopItemDynamic("food",${item.id},"${item.name}")'>Buy</button>
+    </div>`
+  ).join('');
+  showModal('Shop', itemsHtml);
+}
+
+window.buyShopItemDynamic = async function(itemType, itemId, itemName) {
+  const jwt = localStorage.getItem('jwt');
+  // For demo, use a fixed price or fetch from backend if you add price column
+  const price = 10;
+  const res = await fetch('http://localhost:3001/api/yard/purchase', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt },
+    body: JSON.stringify({ itemType, itemId, price })
+  });
+  const data = await res.json();
+  if (data.success) {
+    alert(`You bought and placed a ${itemName} in your yard!`);
+    renderBackyard();
+    fetchAndDisplayPupCoins();
+  } else {
+    alert(data.error || 'Purchase failed');
+  }
+  showShopModal();
+}
+
+async function showInventoryModal() {
+  const invDiv = document.createElement('div');
+  invDiv.innerHTML = '<div>Loading inventory...</div>';
+  showModal('Your Inventory', invDiv.outerHTML);
+  const { accessories, food } = await fetchInventory();
+  let html = '<h3>Accessories</h3>';
+  html += accessories.length ? accessories.map(a =>
+    `<div style='margin-bottom:1rem;'><img src='images/accessories/${a.image}' alt='${a.name}' style='width:32px;vertical-align:middle;margin-right:8px;'><strong>${a.name}</strong> (${a.type})</div>`
+  ).join('') : '<div>None</div>';
+  html += '<h3>Food</h3>';
+  html += food.length ? food.map(f =>
+    `<div style='margin-bottom:1rem;'><img src='images/accessories/${f.image}' alt='${f.name}' style='width:32px;vertical-align:middle;margin-right:8px;'><strong>${f.name}</strong> (${f.type})</div>`
+  ).join('') : '<div>None</div>';
+  showModal('Your Inventory', html);
+}
 
 // --- Admin Section ---
 function showAdminModal() {

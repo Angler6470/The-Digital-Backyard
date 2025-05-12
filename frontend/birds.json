@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "name": "Northern Cardinal",
+    "scientific_name": "Cardinalis cardinalis",
+    "description": "A bright red bird common in CT backyards.",
+    "image": "cardinal.png",
+    "region": "Connecticut",
+    "active_seasons": ["spring", "summer", "fall", "winter"],
+    "preferred_food": ["seed", "fruit"],
+    "preferred_accessories": ["feeder", "birdhouse"],
+    "rarity": "common"
+  },
+  {
+    "id": 2,
+    "name": "Blue Jay",
+    "scientific_name": "Cyanocitta cristata",
+    "description": "A vibrant blue bird with a loud call.",
+    "image": "bluejay.png",
+    "region": "Connecticut",
+    "active_seasons": ["spring", "summer", "fall", "winter"],
+    "preferred_food": ["peanuts", "seed"],
+    "preferred_accessories": ["feeder", "birdbath"],
+    "rarity": "common"
+  },
+  {
+    "id": 3,
+    "name": "American Robin",
+    "scientific_name": "Turdus migratorius",
+    "description": "Familiar orange-breasted bird.",
+    "image": "robin.png",
+    "region": "Connecticut",
+    "active_seasons": ["spring", "summer", "fall"],
+    "preferred_food": ["fruit", "worm"],
+    "preferred_accessories": ["birdbath", "nesting material"],
+    "rarity": "common"
+  },
+  {
+    "id": 4,
+    "name": "Mourning Dove",
+    "scientific_name": "Zenaida macroura",
+    "description": "Soft gray dove, gentle cooing.",
+    "image": "mourningdove.png",
+    "region": "Connecticut",
+    "active_seasons": ["spring", "summer", "fall", "winter"],
+    "preferred_food": ["seed"],
+    "preferred_accessories": ["ground tray"],
+    "rarity": "common"
+  },
+  {
+    "id": 5,
+    "name": "House Sparrow",
+    "scientific_name": "Passer domesticus",
+    "description": "Small brown bird, very adaptable.",
+    "image": "housesparrow.png",
+    "region": "Connecticut",
+    "active_seasons": ["spring", "summer", "fall", "winter"],
+    "preferred_food": ["seed", "crumbs"],
+    "preferred_accessories": ["birdhouse"],
+    "rarity": "common"
+  },
+  {
+    "id": 6,
+    "name": "Song Sparrow",
+    "scientific_name": "Melospiza melodia",
+    "description": "Streaky brown sparrow with a sweet song.",
+    "image": "songsparrow.png",
+    "region": "Connecticut",
+    "active_seasons": ["spring", "summer", "fall"],
+    "preferred_food": ["seed"],
+    "preferred_accessories": ["shrub", "feeder"],
+    "rarity": "common"
+  },
+  {
+    "id": 7,
+    "name": "Downy Woodpecker",
+    "scientific_name": "Picoides pubescens",
+    "description": "Small black-and-white woodpecker.",
+    "image": "downywoodpecker.png",
+    "region": "Connecticut",
+    "active_seasons": ["spring", "summer", "fall", "winter"],
+    "preferred_food": ["suet", "seed"],
+    "preferred_accessories": ["feeder", "tree"],
+    "rarity": "common"
+  },
+  {
+    "id": 8,
+    "name": "Black-capped Chickadee",
+    "scientific_name": "Poecile atricapillus",
+    "description": "Tiny, bold, black-capped bird.",
+    "image": "chickadee.png",
+    "region": "Connecticut",
+    "active_seasons": ["spring", "summer", "fall", "winter"],
+    "preferred_food": ["seed", "suet"],
+    "preferred_accessories": ["feeder", "birdhouse"],
+    "rarity": "common"
+  },
+  {
+    "id": 9,
+    "name": "American Goldfinch",
+    "scientific_name": "Spinus tristis",
+    "description": "Bright yellow finch, loves thistle.",
+    "image": "goldfinch.png",
+    "region": "Connecticut",
+    "active_seasons": ["spring", "summer"],
+    "preferred_food": ["thistle", "sunflower"],
+    "preferred_accessories": ["feeder"],
+    "rarity": "common"
+  },
+  {
+    "id": 10,
+    "name": "House Finch",
+    "scientific_name": "Haemorhous mexicanus",
+    "description": "Red-headed finch, common at feeders.",
+    "image": "housefinch.png",
+    "region": "Connecticut",
+    "active_seasons": ["spring", "summer", "fall", "winter"],
+    "preferred_food": ["seed"],
+    "preferred_accessories": ["feeder"],
+    "rarity": "common"
+  }
+]

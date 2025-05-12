@@ -1,0 +1,51 @@
+[
+  {
+    "id": 1,
+    "name": "Classic Birdhouse",
+    "type": "birdhouse",
+    "image": "birdhouse1.png",
+    "effectiveness": {"1":0.7,"5":0.8,"8":0.6}
+  },
+  {
+    "id": 2,
+    "name": "Tube Feeder",
+    "type": "feeder",
+    "image": "feeder1.png",
+    "effectiveness": {"1":0.8,"2":0.9,"6":0.7,"7":0.7,"8":0.8,"9":0.9,"10":0.8}
+  },
+  {
+    "id": 3,
+    "name": "Bird Bath",
+    "type": "birdbath",
+    "image": "bath1.png",
+    "effectiveness": {"2":0.7,"3":0.9}
+  },
+  {
+    "id": 4,
+    "name": "Ground Tray",
+    "type": "ground tray",
+    "image": "tray1.png",
+    "effectiveness": {"4":0.9}
+  },
+  {
+    "id": 5,
+    "name": "Nesting Material",
+    "type": "nesting material",
+    "image": "nest1.png",
+    "effectiveness": {"3":0.8}
+  },
+  {
+    "id": 6,
+    "name": "Shrub",
+    "type": "shrub",
+    "image": "shrub1.png",
+    "effectiveness": {"6":0.7}
+  },
+  {
+    "id": 7,
+    "name": "Tree",
+    "type": "tree",
+    "image": "tree1.png",
+    "effectiveness": {"7":0.8}
+  }
+]
