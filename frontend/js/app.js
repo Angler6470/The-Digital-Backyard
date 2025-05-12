@@ -146,19 +146,54 @@ async function showInventoryModal() {
   showModal('Your Inventory', html);
 }
 
-function showBirdEncyclopediaModal() {
-  let birdsHtml = encyclopediaBirds.map((bird, idx) =>
-    `<div style='margin-bottom:1rem;cursor:pointer;' onclick='showBirdDetail(${idx})'>
-      <img src='${bird.image}' alt='${bird.name}' style='width:40px;height:40px;vertical-align:middle;margin-right:10px;'>
-      <strong>${bird.name}</strong>
-    </div>`
-  ).join('');
+// --- Bird Encyclopedia ---
+let encyclopediaBirds = [];
+let userBackyardBirds = [];
+
+async function showBirdEncyclopediaModal() {
+  // Fetch encyclopedia data if not already loaded
+  if (encyclopediaBirds.length === 0) {
+    const res = await fetch('http://localhost:3001/api/birds/encyclopedia');
+    encyclopediaBirds = await res.json();
+  }
+  // Fetch user's backyard birds
+  userBackyardBirds = await getUserBackyardBirdNames();
+
+  let birdsHtml = encyclopediaBirds.map((bird, idx) => {
+    const isInBackyard = userBackyardBirds.includes(bird.name);
+    return `
+      <div style='margin-bottom:1rem;cursor:pointer;display:flex;align-items:center;gap:12px;${isInBackyard ? "box-shadow:0 0 12px 4px #43cea2;border-radius:12px;outline:2px solid #43cea2;" : "border-radius:12px;"}' onclick='showBirdDetail(${idx})'>
+        <img src='${bird.image}' alt='${bird.name}' style='width:48px;height:48px;vertical-align:middle;margin-right:10px;'>
+        <div>
+          <strong>${bird.name}</strong><br>
+          <span style='font-size:0.95em;color:#555;'>${bird.climate ? `Climate: ${bird.climate}` : ''}${bird.food ? ` | Food: ${bird.food}` : ''}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
   showModal('Bird Encyclopedia', birdsHtml);
 }
 
-function showBirdDetail(idx) {
+window.showBirdDetail = function(idx) {
   const bird = encyclopediaBirds[idx];
-  showModal(bird.name, `<img src='${bird.image}' alt='${bird.name}' style='width:80px;height:80px;'><p>${bird.description}</p>`);
+  showModal(
+    bird.name,
+    `<img src='${bird.image}' alt='${bird.name}' style='width:80px;height:80px;display:block;margin:auto 0 1rem auto;'><p>${bird.description}</p>
+    <ul style='list-style:none;padding:0;font-size:1.05em;'>
+      ${bird.climate ? `<li><b>Climate:</b> ${bird.climate}</li>` : ''}
+      ${bird.food ? `<li><b>Food:</b> ${bird.food}</li>` : ''}
+      ${bird.properties ? `<li><b>Properties:</b> ${bird.properties}</li>` : ''}
+    </ul>`
+  );
+};
+
+async function getUserBackyardBirdNames() {
+  const jwt = localStorage.getItem('jwt');
+  if (!jwt) return [];
+  const res = await fetch('http://localhost:3001/api/yard', { headers: { 'Authorization': 'Bearer ' + jwt } });
+  const data = await res.json();
+  if (!data.yard || !Array.isArray(data.yard.birds)) return [];
+  return data.yard.birds.map(b => b.name);
 }
 
 function showModal(title, content) {
