@@ -1,0 +1,22 @@
+-- Add initial accessories to the shop with prices (in pup coins)
+INSERT INTO accessories (name, type, image, description, price) VALUES
+  ('Bird Bath', 'bath', 'bath1.png', 'A shallow bath for birds to drink and clean their feathers. Attracts robins, bluebirds, and cardinals.', 30),
+  ('Birdhouse', 'birdhouse', 'birdhouse1.png', 'A cozy wooden birdhouse perfect for wrens, chickadees, and bluebirds.', 40),
+  ('Feeder', 'feeder', 'feeder1.png', 'A classic seed feeder that attracts finches, sparrows, and cardinals.', 25),
+  ('Hummingbird Feeder', 'feeder', 'hummingbirdfeeder.png', 'A nectar-filled feeder designed to attract hummingbirds with its bright red color.', 35),
+  ('Suet Feeder', 'feeder', 'suetfeeder.png', 'A cage feeder for suet cakes, loved by woodpeckers and nuthatches.', 28),
+  ('Platform Feeder', 'feeder', 'platformfeeder.png', 'An open tray feeder for ground-feeding birds like doves and juncos.', 22),
+  ('Peanut Feeder', 'feeder', 'peanutfeeder.png', 'A mesh feeder for peanuts, attracting blue jays and woodpeckers.', 27),
+  ('Nyjer Feeder', 'feeder', 'nyjerfeeder.png', 'A tube feeder for nyjer seed, a favorite of goldfinches and siskins.', 26),
+  ('Gourd Birdhouse', 'birdhouse', 'gourdbirdhouse.png', 'A natural gourd house, perfect for purple martins and swallows.', 38),
+  ('Wren House', 'birdhouse', 'wrenhouse.png', 'A small house with a tiny entrance, ideal for wrens and chickadees.', 32),
+  ('Bluebird Box', 'birdhouse', 'bluebirdbox.png', 'A nest box designed for bluebirds, with proper ventilation and drainage.', 36),
+  ('Oriole Feeder', 'feeder', 'oriolefeeder.png', 'A feeder for oranges and jelly, attracting orioles and tanagers.', 33),
+  ('Heated Bird Bath', 'bath', 'heatedbath.png', 'Keeps water ice-free in winter, attracting birds year-round.', 45),
+  ('Window Feeder', 'feeder', 'windowfeeder.png', 'A clear feeder that attaches to your window for up-close birdwatching.', 20),
+  ('Ground Tray', 'feeder', 'groundtray.png', 'A low tray for ground-feeding birds like sparrows and towhees.', 18),
+  ('Squirrel-Proof Feeder', 'feeder', 'squirrelprooffeeder.png', 'A clever feeder that keeps squirrels out, for cardinals and chickadees.', 50),
+  ('Fruit Feeder', 'feeder', 'fruitfeeder.png', 'Holds apple or orange slices, attracting orioles, tanagers, and catbirds.', 24),
+  ('Peanut Butter Log', 'feeder', 'peanutbutterlog.png', 'A log with holes for peanut butter, loved by woodpeckers and titmice.', 21),
+  ('Mister', 'bath', 'mister.png', 'A gentle water mister that attracts hummingbirds and warblers.', 29),
+  ('Perch Pole', 'perch', 'perchpole.png', 'A tall pole for birds to rest and survey the yard, used by blue jays and doves.', 15);

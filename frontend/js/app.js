@@ -93,10 +93,16 @@ async function showShopModal() {
   const { accessories, food } = await fetchShopItems();
   let itemsHtml = '<h3>Accessories</h3>';
   itemsHtml += accessories.map(item =>
-    `<div style='margin-bottom:1rem;'>
-      <img src='images/accessories/${item.image}' alt='${item.name}' style='width:32px;vertical-align:middle;margin-right:8px;'>
-      <strong>${item.name}</strong> (${item.type})
-      <button onclick='buyShopItemDynamic("accessory",${item.id},"${item.name}")'>Buy</button>
+    `<div style='margin-bottom:1.2rem;padding:0.7rem 0.5rem 0.7rem 0.5rem;border-radius:10px;background:#f7f7f7;box-shadow:0 1px 4px #e0e0e0;display:flex;align-items:center;gap:16px;'>
+      <img src='images/accessories/${item.image}' alt='${item.name}' style='width:40px;height:40px;vertical-align:middle;margin-right:10px;'>
+      <div style='flex:1;'>
+        <strong>${item.name}</strong> <span style='color:#888;font-size:0.95em;'>(${item.type})</span><br>
+        <span style='font-size:0.97em;color:#555;'>${item.description || ''}</span>
+      </div>
+      <div style='text-align:right;'>
+        <span style='font-weight:bold;color:#43cea2;font-size:1.1em;'>${item.price} 🪙</span><br>
+        <button onclick='buyShopItemDynamic("accessory",${item.id},"${item.name}")'>Buy</button>
+      </div>
     </div>`
   ).join('');
   itemsHtml += '<h3>Food</h3>';
