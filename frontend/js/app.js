@@ -133,7 +133,6 @@ function showModal(title, content) {
         <div>${content}</div>
         <div style="margin-top:1rem;display:flex;gap:1rem;">
           <button id="close-modal">Close</button>
-          <button id="modal-home-btn">Home</button>
         </div>
       </div>
     </div>
@@ -141,7 +140,6 @@ function showModal(title, content) {
   document.getElementById('close-modal').onclick = () => {
     modalContainer.innerHTML = '';
   };
-  document.getElementById('modal-home-btn').onclick = showHome;
 }
 
 let isLoggedIn = false;
@@ -327,28 +325,16 @@ function startMeterGame() {
 
 // --- Shop ---
 async function fetchShopItems() {
-  // Only run the offline part if offline, otherwise call the API the first time like normal
-  if (!navigator.onLine) {
-    // Offline: load from static JSON
-    const [accRes, foodRes] = await Promise.all([
-      fetch('accessories.json'),
-      fetch('food.json')
-    ]);
-    const accessories = await accRes.json();
-    const food = await foodRes.json();
-    return { accessories, food };
-  } else {
-    // Online: fetch from API
-    const jwt = localStorage.getItem('jwt');
-    if (!jwt) return { accessories: [], food: [] };
-    const [accRes, foodRes] = await Promise.all([
-      fetch('http://localhost:3001/api/shop/accessories', { headers: { 'Authorization': 'Bearer ' + jwt } }),
-      fetch('http://localhost:3001/api/shop/food', { headers: { 'Authorization': 'Bearer ' + jwt } })
-    ]);
-    const accessories = (await accRes.json()).accessories || [];
-    const food = (await foodRes.json()).food || [];
-    return { accessories, food };
-  }
+  // Always fetch from backend API, no offline/static JSON fallback
+  const jwt = localStorage.getItem('jwt');
+  if (!jwt) return { accessories: [], food: [] };
+  const [accRes, foodRes] = await Promise.all([
+    fetch('http://localhost:3001/api/shop/accessories', { headers: { 'Authorization': 'Bearer ' + jwt } }),
+    fetch('http://localhost:3001/api/shop/food', { headers: { 'Authorization': 'Bearer ' + jwt } })
+  ]);
+  const accessories = (await accRes.json()).accessories || [];
+  const food = (await foodRes.json()).food || [];
+  return { accessories, food };
 }
 
 async function fetchInventory() {

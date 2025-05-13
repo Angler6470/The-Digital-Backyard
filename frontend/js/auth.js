@@ -85,7 +85,7 @@ async function signupUser(username, password) {
 
 function logoutUser() {
   localStorage.removeItem('jwt');
-  onLogout();
+  // Optionally, reload the page or reset UI state
   showLoginModal();
 }
 
@@ -100,5 +100,12 @@ async function onLoginSuccess() {
     username = payload.username;
   } catch {}
   if (username) showLoggedInUserBadge(username);
-  // ...existing code...
-}
+  // Show a login notification
+  const badge = document.getElementById('user-badge');
+  if (badge) {
+    badge.style.boxShadow = '0 0 16px 4px #43cea2,0 2px 12px #185a9d55,0 2px 8px #ffb30055';
+    badge.style.transition = 'box-shadow 0.5s';
+    badge.innerHTML += '<span id="login-success-msg" style="margin-left:1rem;font-size:1em;color:#43cea2;font-weight:bold;">Logged in!</span>';
+    setTimeout(() => {
+      const msg = document.getElementById('login-success-msg');
+      if
