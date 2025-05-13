@@ -202,6 +202,16 @@ async function createUserYard(location) {
   });
 }
 
+// Accepts an object with all yard details
+window.createUserYardWithDetails = async function({ name, color, location, bonusPlus, bonusMinus }) {
+  const jwt = localStorage.getItem('jwt');
+  await fetch('http://localhost:3001/api/yard', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + jwt },
+    body: JSON.stringify({ name, color, location, bonusPlus, bonusMinus })
+  });
+}
+
 async function goToBackyard() {
   await updateWeatherAndBackground();
   renderBackyard();

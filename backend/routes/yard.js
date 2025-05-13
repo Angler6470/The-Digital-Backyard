@@ -39,15 +39,19 @@ router.get('/', authenticate, async (req, res) => {
   });
 });
 
-// POST /api/yard - Create a new yard (location required)
+// POST /api/yard - Create a new yard (location, name, color, bonusPlus, bonusMinus)
 router.post('/', authenticate, async (req, res) => {
   const userId = req.user.userId;
-  const { location } = req.body;
+  const { location, name, color, bonusPlus, bonusMinus } = req.body;
   if (!location) return res.status(400).json({ error: 'Location required' });
   // Only allow one yard per user for now
   const exists = await pool.query('SELECT * FROM user_yards WHERE user_id = $1', [userId]);
   if (exists.rows.length > 0) return res.status(409).json({ error: 'Yard already exists' });
-  const result = await pool.query('INSERT INTO user_yards (user_id, location) VALUES ($1, $2) RETURNING *', [userId, location]);
+  const result = await pool.query(
+    `INSERT INTO user_yards (user_id, location, name, color, bonus_plus, bonus_minus)
+     VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+    [userId, location, name || null, color || null, bonusPlus || null, bonusMinus || null]
+  );
   res.json({ yard: result.rows[0] });
 });
 

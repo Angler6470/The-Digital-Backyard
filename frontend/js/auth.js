@@ -74,7 +74,7 @@ async function signupUser(username, password) {
     const data = await res.json();
     if (res.ok && data.token) {
       localStorage.setItem('jwt', data.token);
-      onLoginSuccess();
+      showYardCreationModal(); // Show yard creation modal after signup
     } else {
       alert(data.error || 'Signup failed');
     }
@@ -83,10 +83,40 @@ async function signupUser(username, password) {
   }
 }
 
-function logoutUser() {
-  localStorage.removeItem('jwt');
-  // Optionally, reload the page or reset UI state
-  showLoginModal();
+function showYardCreationModal() {
+  const modalContainer = document.getElementById('modal-container');
+  modalContainer.innerHTML = `
+    <div class="modal-overlay" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;">
+      <div class="modal" style="background:#fffbe7;padding:2.5rem 2rem 2rem 2rem;border-radius:18px;min-width:340px;max-width:95vw;box-shadow:0 8px 32px rgba(24,90,157,0.18),0 2px 8px #ffb300 inset;border:4px solid #ffb300;position:relative;">
+        <button id="close-yard-modal" style="position:absolute;top:10px;right:10px;background:#ffb300;color:#fff;border:none;border-radius:50%;width:32px;height:32px;font-size:1.3rem;cursor:pointer;box-shadow:0 2px 8px #ffb30055;">×</button>
+        <h2 style="font-family:'Fredoka One',cursive;color:#185a9d;text-align:center;margin-bottom:1.2rem;">Create Your Yard</h2>
+        <input id="yard-name" placeholder="Yard Name" style="display:block;margin-bottom:1rem;width:100%;padding:0.6rem 1rem;font-size:1.1rem;border-radius:8px;border:1.5px solid #43cea2;">
+        <input id="yard-color" placeholder="Yard Color (e.g. #43cea2 or 'green')" style="display:block;margin-bottom:1rem;width:100%;padding:0.6rem 1rem;font-size:1.1rem;border-radius:8px;border:1.5px solid #43cea2;">
+        <input id="yard-location" placeholder="Location (e.g. Connecticut)" style="display:block;margin-bottom:1rem;width:100%;padding:0.6rem 1rem;font-size:1.1rem;border-radius:8px;border:1.5px solid #43cea2;">
+        <input id="yard-bonus-plus" placeholder="Bonus+ Area (e.g. Cardinals)" style="display:block;margin-bottom:1rem;width:100%;padding:0.6rem 1rem;font-size:1.1rem;border-radius:8px;border:1.5px solid #43cea2;">
+        <input id="yard-bonus-minus" placeholder="Bonus- Area (e.g. Blue Jays)" style="display:block;margin-bottom:1.2rem;width:100%;padding:0.6rem 1rem;font-size:1.1rem;border-radius:8px;border:1.5px solid #43cea2;">
+        <button id="create-yard-btn" style="background:linear-gradient(90deg,#43cea2,#ffb300);color:#fff;font-weight:bold;padding:0.7rem 1.5rem;border:none;border-radius:25px;font-size:1.1rem;cursor:pointer;width:100%;">Create Yard</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('close-yard-modal').onclick = () => {
+    modalContainer.innerHTML = '';
+  };
+  document.getElementById('create-yard-btn').onclick = async () => {
+    const name = document.getElementById('yard-name').value;
+    const color = document.getElementById('yard-color').value;
+    const location = document.getElementById('yard-location').value;
+    const bonusPlus = document.getElementById('yard-bonus-plus').value;
+    const bonusMinus = document.getElementById('yard-bonus-minus').value;
+    if (!name || !color || !location) {
+      alert('Please fill out all required fields.');
+      return;
+    }
+    await window.createUserYardWithDetails({ name, color, location, bonusPlus, bonusMinus });
+    modalContainer.innerHTML = '';
+    if (typeof goToBackyard === 'function') await goToBackyard();
+    if (typeof onLoginSuccess === 'function') await onLoginSuccess();
+  };
 }
 
 // Patch onLoginSuccess to show badge

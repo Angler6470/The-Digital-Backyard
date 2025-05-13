@@ -105,16 +105,6 @@ INSERT INTO bird_species (name, scientific_name, description, image, region, act
 ('American Goldfinch', 'Spinus tristis', 'Bright yellow finch, loves thistle.', 'goldfinch.png', 'Connecticut', ARRAY['spring','summer'], ARRAY['thistle','sunflower'], ARRAY['feeder'], 'common'),
 ('House Finch', 'Haemorhous mexicanus', 'Red-headed finch, common at feeders.', 'housefinch.png', 'Connecticut', ARRAY['spring','summer','fall','winter'], ARRAY['seed'], ARRAY['feeder'], 'common');
 
--- ACCESSORIES
-INSERT INTO accessories (name, type, image, effectiveness) VALUES
-('Classic Birdhouse', 'birdhouse', 'birdhouse1.png', '{"1":0.7,"5":0.8,"8":0.6}'),
-('Tube Feeder', 'feeder', 'feeder1.png', '{"1":0.8,"2":0.9,"6":0.7,"7":0.7,"8":0.8,"9":0.9,"10":0.8}'),
-('Bird Bath', 'birdbath', 'bath1.png', '{"2":0.7,"3":0.9}'),
-('Ground Tray', 'ground tray', 'tray1.png', '{"4":0.9}'),
-('Nesting Material', 'nesting material', 'nest1.png', '{"3":0.8}'),
-('Shrub', 'shrub', 'shrub1.png', '{"6":0.7}'),
-('Tree', 'tree', 'tree1.png', '{"7":0.8}');
-
 -- FOOD
 INSERT INTO food (name, type, image, effectiveness) VALUES
 ('Sunflower Seed', 'seed', 'seed1.png', '{"1":0.8,"2":0.7,"4":0.7,"5":0.7,"6":0.7,"7":0.7,"8":0.8,"9":0.8,"10":0.8}'),
@@ -124,3 +114,11 @@ INSERT INTO food (name, type, image, effectiveness) VALUES
 ('Thistle', 'thistle', 'thistle1.png', '{"9":0.9}'),
 ('Worm', 'worm', 'worm1.png', '{"3":0.7}'),
 ('Crumbs', 'crumbs', 'crumbs1.png', '{"5":0.6}');
+
+ALTER TABLE user_yards ADD COLUMN IF NOT EXISTS name TEXT;
+ALTER TABLE user_yards ADD COLUMN IF NOT EXISTS color TEXT;
+ALTER TABLE user_yards ADD COLUMN IF NOT EXISTS bonus_plus TEXT;
+ALTER TABLE user_yards ADD COLUMN IF NOT EXISTS bonus_minus TEXT;
+
+ALTER TABLE accessories ADD COLUMN IF NOT EXISTS description TEXT;
+ALTER TABLE accessories ADD COLUMN IF NOT EXISTS price INTEGER;
