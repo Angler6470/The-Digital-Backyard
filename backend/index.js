@@ -10,6 +10,7 @@ import weatherRoutes from './routes/weather.js';
 import accessoriesRoutes from './routes/accessories.js';
 import foodRoutes from './routes/food.js';
 import shopRoutes from './routes/shop.js';
+import yardRoutes from './routes/yard.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -26,6 +27,7 @@ app.use('/api/weather', weatherRoutes);
 app.use('/api/accessories', accessoriesRoutes);
 app.use('/api/food', foodRoutes);
 app.use('/api/shop', shopRoutes);
+app.use('/api/yard', yardRoutes);
 
 app.get('/', (req, res) => {
   res.send('Virtual Backyard Bird Sanctuary API running!');

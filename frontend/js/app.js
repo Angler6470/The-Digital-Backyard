@@ -529,3 +529,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // ...existing code...
   updateWeatherAndBackground();
 });
+
+function logoutUser() {
+  localStorage.removeItem('jwt');
+  isLoggedIn = false;
+  showLoginButton();
+  hideEarnMeterButton();
+  document.getElementById('logout').style.display = 'none';
+  document.getElementById('open-shop').style.display = 'none';
+  document.getElementById('open-encyclopedia').style.display = 'none';
+  document.getElementById('backyard').innerHTML = '';
+  showModal('Logged Out', '<p>You have been logged out.</p>');
+}
