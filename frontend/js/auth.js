@@ -108,4 +108,8 @@ async function onLoginSuccess() {
     badge.innerHTML += '<span id="login-success-msg" style="margin-left:1rem;font-size:1em;color:#43cea2;font-weight:bold;">Logged in!</span>';
     setTimeout(() => {
       const msg = document.getElementById('login-success-msg');
-      if
+      if (msg) msg.remove();
+      badge.style.boxShadow = '0 2px 12px #185a9d55,0 2px 8px #ffb30055';
+    }, 2000);
+  }
+}
